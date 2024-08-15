@@ -2,6 +2,12 @@ package server
 
 import (
 	"context"
+	vmv1 "github.com/example/virtualmachine/api/v1"
+	_ "github.com/example/virtualmachine/docs"
+	"github.com/labstack/echo/v4/middleware"
+	"github.com/labstack/gommon/log"
+	echoSwagger "github.com/swaggo/echo-swagger"
+	"k8s.io/apimachinery/pkg/runtime"
 	"net/http"
 	"os"
 	"os/signal"
@@ -15,11 +21,11 @@ import (
 )
 
 var (
-	echoLog = ctrl.Log.WithName("setup")
+	echoLog = ctrl.Log.WithName("echo")
 )
 
 type Server struct {
-	//k8sClient client.Client
+	k8sClient client.Client
 }
 
 func (s Server) Init() {
@@ -30,19 +36,46 @@ func (s Server) Init() {
 		echoLog.Error(err, "Failed to get Kubernetes config")
 	}
 
-	_, err = client.New(cfg, client.Options{})
+	// Register the VirtualMachine type with the scheme
+	scheme := runtime.NewScheme()
+	if err := vmv1.AddToScheme(scheme); err != nil {
+		echoLog.Error(err, "Failed to add VirtualMachine to scheme")
+		os.Exit(1)
+	}
+
+	s.k8sClient, err = client.New(cfg, client.Options{Scheme: scheme})
 	if err != nil {
 		echoLog.Error(err, "Failed to create Kubernetes client")
+		os.Exit(1)
 	}
 
 	// Initialize Echo
 	e := echo.New()
-	//echoLog.Info("echo server started")
+	e.Logger.SetLevel(log.INFO)
+	e.Use(middleware.Logger()) // Middleware to log requests
 
-	//vm := &vmv1.VirtualMachine{}
-	//k8sClient.Get(context.Background(), namespacedName, vm)
-	// Routes
-	//s.InitRoutes(e)
+	// swagger
+	e.GET("/swagger/*", echoSwagger.WrapHandler)
+
+	echoLog.Info("echo server started")
+
+	e.Logger.Printf("echo logger")
+
+	// Fetch the list of VirtualMachines
+	vmList := &vmv1.VirtualMachineList{}
+	err = s.k8sClient.List(context.Background(), vmList, &client.ListOptions{
+		Namespace: "default", // Replace with the desired namespace or leave empty to list all namespaces
+	})
+	if err != nil {
+		echoLog.Error(err, "Failed to list VirtualMachines")
+	} else {
+		// Iterate over the list and print the names of the VirtualMachines
+		for _, vm := range vmList.Items {
+			echoLog.Info("VirtualMachine", "name", vm.Name, "namespace", vm.Namespace, "status", vm.Status)
+		}
+	}
+
+	s.InitRoutes(e)
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 	defer stop()

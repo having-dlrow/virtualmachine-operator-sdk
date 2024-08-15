@@ -39,6 +39,11 @@ type VirtualMachineStatus struct {
 	Hostname  string `json:"hostname,omitempty"`
 	CreatedAt string `json:"createdAt,omitempty"`
 	UpdatedAt string `json:"updatedAt,omitempty"`
+	IsActive  bool   `json:"isActive,omitempty"`
+
+	// Conditions store the status conditions of the instances
+	// +operator-sdk:csv:customresourcedefinitions:type=status
+	Conditions []metav1.Condition `json:"conditions,omitempty" patchStrategy:"merge" patchMergeKey:"type" protobuf:"bytes,1,rep,name=conditions"`
 }
 
 //+kubebuilder:object:root=true

@@ -19,8 +19,11 @@ package main
 import (
 	"crypto/tls"
 	"flag"
-	"github.com/example/virtualmachine/internal/server"
 	"os"
+
+	"go.uber.org/zap/zapcore"
+
+	"github.com/example/virtualmachine/internal/server"
 
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
 	// to ensure that exec-entrypoint and run can make use of them.
@@ -74,6 +77,7 @@ func startManager() {
 		"If set, HTTP/2 will be enabled for the metrics and webhook servers")
 	opts := zap.Options{
 		Development: true,
+		Level:       zapcore.Level(-10),
 	}
 	opts.BindFlags(flag.CommandLine)
 	flag.Parse()
@@ -133,6 +137,13 @@ func startManager() {
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "VirtualMachine")
+		os.Exit(1)
+	}
+	if err = (&controller.VirtualMachineGroupReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "VirtualMachineGroup")
 		os.Exit(1)
 	}
 	//+kubebuilder:scaffold:builder

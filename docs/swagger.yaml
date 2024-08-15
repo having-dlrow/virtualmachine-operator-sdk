@@ -1,0 +1,124 @@
+definitions:
+  model.VMRequest:
+    properties:
+      name:
+        type: string
+      spec:
+        $ref: '#/definitions/v1.VirtualMachineSpec'
+    type: object
+  v1.VirtualMachineSpec:
+    properties:
+      availabilityZone:
+        type: string
+      devAdmin:
+        type: string
+      flavor:
+        type: string
+      image:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /virtualmachinegroups:
+    get:
+      consumes:
+      - application/json
+      description: VirtualGroupMachine 목록를 조회한다.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not Found
+      summary: VirtualGroupMachine 목록
+  /virtualmachinegroups/{id}:
+    get:
+      consumes:
+      - application/json
+      description: VirtualMachineGroup 정보를 조회한다.
+      parameters:
+      - description: Virtual Machine ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not Found
+      summary: VirtualMachineGroup 조회
+  /virtualmachines:
+    get:
+      consumes:
+      - application/json
+      description: VirtualMachine 목록를 조회한다.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not Found
+      summary: VirtualMachine 목록
+    post:
+      consumes:
+      - application/json
+      description: VirtualMachine 정보를 생성한다.
+      parameters:
+      - description: Request of VirtualMachine
+        in: body
+        name: vm
+        required: true
+        schema:
+          $ref: '#/definitions/model.VMRequest'
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+        "404":
+          description: Not Found
+      summary: VirtualMachine 생성
+  /virtualmachines/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: VirtualMachine 삭제합니다.
+      parameters:
+      - description: Virtual Machine ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+      summary: VirtualMachine 삭제
+    get:
+      consumes:
+      - application/json
+      description: VirtualMachine 정보를 조회한다.
+      parameters:
+      - description: Virtual Machine ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not Found
+      summary: VirtualMachine 조회
+swagger: "2.0"

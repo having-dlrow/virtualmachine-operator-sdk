@@ -1,11 +1,12 @@
 apiVersion: vm.example.com/v1
-kind: VirtualMachine
+kind: VirtualMachineGroup
 metadata:
   labels:
     app.kubernetes.io/name: virtualmachine-operator
     app.kubernetes.io/managed-by: kustomize
-  name: virtualmachine-sample
+  name: virtualmachinegroup-sample2
 spec:
+  replicas : 3
   availabilityZone: us-west-2
   devAdmin: admin@example.com
   flavor: m5.large

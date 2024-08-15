@@ -1,0 +1,192 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "paths": {
+        "/virtualmachinegroups": {
+            "get": {
+                "description": "VirtualGroupMachine 목록를 조회한다.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "VirtualGroupMachine 목록",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                }
+            }
+        },
+        "/virtualmachinegroups/{id}": {
+            "get": {
+                "description": "VirtualMachineGroup 정보를 조회한다.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "VirtualMachineGroup 조회",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Virtual Machine ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                }
+            }
+        },
+        "/virtualmachines": {
+            "get": {
+                "description": "VirtualMachine 목록를 조회한다.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "VirtualMachine 목록",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                }
+            },
+            "post": {
+                "description": "VirtualMachine 정보를 생성한다.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "VirtualMachine 생성",
+                "parameters": [
+                    {
+                        "description": "Request of VirtualMachine",
+                        "name": "vm",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.VMRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "Accepted"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                }
+            }
+        },
+        "/virtualmachines/{id}": {
+            "get": {
+                "description": "VirtualMachine 정보를 조회한다.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "VirtualMachine 조회",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Virtual Machine ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                }
+            },
+            "delete": {
+                "description": "VirtualMachine 삭제합니다.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "VirtualMachine 삭제",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Virtual Machine ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "model.VMRequest": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "spec": {
+                    "$ref": "#/definitions/v1.VirtualMachineSpec"
+                }
+            }
+        },
+        "v1.VirtualMachineSpec": {
+            "type": "object",
+            "properties": {
+                "availabilityZone": {
+                    "type": "string"
+                },
+                "devAdmin": {
+                    "type": "string"
+                },
+                "flavor": {
+                    "type": "string"
+                },
+                "image": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

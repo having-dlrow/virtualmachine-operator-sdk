@@ -20,4 +20,13 @@ resources:
   kind: VirtualMachine
   path: github.com/example/virtualmachine/api/v1
   version: v1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: example.com
+  group: vm
+  kind: VirtualMachineGroup
+  path: github.com/example/virtualmachine/api/v1
+  version: v1
 version: "3"
